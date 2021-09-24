@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг»
 
 * Студент: [Леонид Харитонов](https://up.htmlacademy.ru/javascript/24/user/1570079).
-* Наставник: `Неизвестно`.
+* Наставник: [Геннадий Максимов](https://htmlacademy.ru/profile/gennadiy).
 
 ---
 
