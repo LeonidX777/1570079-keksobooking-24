@@ -1,16 +1,6 @@
-const getRandomIntegerInRange = (min, max) => {
-  const rand = min - 0.5 + Math.random() * (max - min + 1);
-  return Math.round(rand);
-};
+const MAX_COUNT = 10;
 
-getRandomIntegerInRange(1, 3);
-
-const getRandomIntegerToMax = (max) =>
-  Math.floor(Math.random() * max);
-
-getRandomIntegerToMax(1);
-
-const AVATAR = [
+const AVATARS = [
   'img/avatars/user01.png',
   'img/avatars/user02.png',
   'img/avatars/user03.png',
@@ -22,17 +12,32 @@ const AVATAR = [
   'img/avatars/user09.png',
   'img/avatars/user10.png',
 ];
-const ADDRESS = [
+
+const TITLES = [
+  'Заголовок1',
+  'Заголовок2',
+  'Заголовок3',
+];
+
+const ADDRESSES = [
   'location.lat',
   'location.lng',
 ];
-const TYPE = [
+
+const Price = {MIN:1, MAX:100};
+
+const TYPES = [
   'palace',
   'flat',
   'house',
   'bungalow',
   'hotel',
 ];
+
+const Rooms = {MIN:1, MAX:5};
+
+const Guests = {MIN:1, MAX:500};
+
 const CHECKIN = [
   '12:00',
   '13:00',
@@ -57,41 +62,59 @@ const PHOTOS = [
   'https://assets.htmlacademy.ru/content/intensive/javascript-1/keksobooking/claire-rendall-b6kAwr1i0Iw.jpg',
 ];
 
-const SIMILAR_HOTEL_COUNT = 10;
+const lat = {MIN:35.65000, MAX:35.70000, DIGITS:5};
 
-const createHotel = () => {
-  const randomFeaturesIndex = _.random(0, FEATURES.length - 1);
-  const randomPhotosIndex = _.random(0, PHOTOS.length - 1);
-  const randomAvatarIndex = _.random(0, AVATAR.length - 1);
-  const randomTypeIndex = _.random(0, TYPE.length - 1);
-  const randomCheckinIndex = _.random(0, CHECKIN.length - 1);
-  const randomCheckoutIndex = _.random(0, CHECKOUT.length - 1);
+const lng = {MIN:139.70000, MAX:139.80000, DIGITS:5};
 
-  const getPriceRandomIntegerInRange = (min, max) => {
-    const rand = min - 0.5 + Math.random() * (max - min + 1);
-    return Math.round(rand);
-  };
-  const getRoomsRandomIntegerInRange = (min, max) => {
-    const rand = min - 0.5 + Math.random() * (max - min + 1);
-    return Math.round(rand);
-  };
-  const getGuestsRandomIntegerInRange = (min, max) => {
-    const rand = min - 0.5 + Math.random() * (max - min + 1);
-    return Math.round(rand);
-  };
-  return {
-    features: FEATURES[randomFeaturesIndex],
-    avatar: AVATAR[randomAvatarIndex],
-    address: '',
-    price: '',
-    type: TYPE[randomTypeIndex],
-    rooms: '',
-    guests: '',
-    checkin: CHECKIN[randomCheckinIndex],
-    checkout: CHECKOUT[randomCheckoutIndex],
-    photos: PHOTOS[randomPhotosIndex],
-    location: '',
-  };
+const getRandomIntegerInRange =  (max, min = 0) => {
+  const rand = min - 0.5 + Math.random() * (max - min + 1);
+  return Math.round(rand);
 };
 
-const similarHotels = Array.from({length: SIMILAR_HOTEL_COUNT}, createHotel);
+const getAuthor = () => (
+  {
+    avatar: getRandomIntegerInRange(AVATARS.length - 1),
+  }
+);
+
+const getOffer = () => (
+  {
+    title: getRandomIntegerInRange(TITLES.length - 1),
+    address: getRandomIntegerInRange(ADDRESSES.length - 1),
+    price: getRandomIntegerInRange(Price.MAX, Price.MIN),
+    type: getRandomIntegerInRange(TYPES.length - 1),
+    rooms: getRandomIntegerInRange(Rooms.MAX, Rooms.MIN),
+    guests: getRandomIntegerInRange(Guests.MAX, Guests.MIN),
+    checkin: getRandomIntegerInRange(CHECKIN.length - 1),
+    checkout: getRandomIntegerInRange(CHECKOUT.length - 1),
+    features: getRandomIntegerInRange(FEATURES.length - 1),
+    description: getRandomIntegerInRange(TITLES.length - 1),
+    photos: getRandomIntegerInRange(PHOTOS.length - 1),
+  }
+);
+
+const getRandomPositiveFloat = (ar, br, digits = 1) => {
+  const lower = Math.min(Math.abs(ar), Math.abs(br));
+  const upper = Math.max(Math.abs(ar), Math.abs(br));
+  const result = Math.random() * (upper - lower) + lower;
+  return result.toFixed(digits);
+};
+
+const getLocation = () => (
+  {
+    lat: getRandomPositiveFloat(lat.MAX, lat.MIN, lat.DIGITS),
+    lng: getRandomPositiveFloat(lng.MAX, lng.MIN, lng.DIGITS),
+  }
+);
+
+const getAnnouncement = () => (
+  {
+    author: getAuthor(),
+    offer: getOffer(),
+    location: getLocation(),
+  }
+);
+
+const announcements = new Array (MAX_COUNT).fill('').map(() => getAnnouncement());
+
+announcements;
