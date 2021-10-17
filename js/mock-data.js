@@ -1,5 +1,6 @@
 import {MAX_COUNT, AVATARS, TITLES, TYPES, FEATURES, DESCRIPTIONS, PHOTOS, CHECKIN, CHECKOUT, Price, Room, Guest, locationLat, locationLng} from './data.js';
 import {getRandomIntegerInRange, getRandomPositiveFloat} from './util.js';
+import {createCard} from './module.js';
 
 const getFeatures = (features) => features.slice(0, getRandomIntegerInRange(features.length));
 
@@ -43,3 +44,8 @@ const getAnnouncement = () => (
 const announcements = new Array (MAX_COUNT).fill('').map(() => getAnnouncement());
 
 announcements;
+const container = document.querySelector('#map-canvas');
+
+announcements.forEach((offer) => {
+  container.appendChild(createCard(offer));
+});
