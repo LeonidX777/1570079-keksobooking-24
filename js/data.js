@@ -14,17 +14,17 @@ const AVATARS = [
 ];
 
 const TITLES = [
-  'Заголовок1',
-  'Заголовок2',
-  'Заголовок3',
+  'Заголовок 1',
+  'Заголовок 2',
+  'Заголовок 3',
 ];
 
 const TYPES = [
-  'palace',
-  'flat',
-  'house',
-  'bungalow',
-  'hotel',
+  'Palace',
+  'Flat',
+  'House',
+  'Bungalow',
+  'Hotel',
 ];
 
 const FEATURES = [
@@ -37,9 +37,9 @@ const FEATURES = [
 ];
 
 const DESCRIPTIONS = [
-  'Описание1',
-  'Описание2',
-  'Описание3',
+  'Описание 1',
+  'Описание 2',
+  'Описание 3',
 ];
 
 const PHOTOS = [

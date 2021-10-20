@@ -40,8 +40,9 @@ const createCard = (object) => {
   }
   const address = offerCard.querySelector('.popup__text--address');
   if (offer.address) {
-    address.textContent = offer.address;
-  } else {
+    address.textContent = `${offer.address.lat} ${offer.address.lng}`;
+  }
+  else {
     address.remove();
   }
   const price = offerCard.querySelector('.popup__text--price');
@@ -58,7 +59,7 @@ const createCard = (object) => {
   }
   const capacity = offerCard.querySelector('.popup__text--capacity');
   if (offer.rooms && offer.guests) {
-    capacity.textContent = `${offer.rooms} комнат для ${offer.guests} гостей` ;
+    capacity.textContent = `${offer.rooms} комнат${offer.rooms === 1 ? 'a' : 'ы'} для ${offer.guests} гост${offer.guests === 1 ? 'я' : 'ей'}`;
   } else {
     capacity.remove();
   }
