@@ -1,5 +1,3 @@
-const MAX_COUNT = 10;
-
 const AVATARS = [
   'img/avatars/user01.png',
   'img/avatars/user02.png',
@@ -87,4 +85,4 @@ const locationLng = {
   digits: 5,
 };
 
-export {MAX_COUNT, AVATARS, TITLES, TYPES, FEATURES, DESCRIPTIONS, PHOTOS, CHECKIN, CHECKOUT, Price, Room, Guest, locationLat, locationLng};
+export {AVATARS, TITLES, TYPES, FEATURES, DESCRIPTIONS, PHOTOS, CHECKIN, CHECKOUT, Price, Room, Guest, locationLat, locationLng};
