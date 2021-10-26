@@ -1,5 +1,3 @@
-const MAX_COUNT = 10;
-
 const AVATARS = [
   'img/avatars/user01.png',
   'img/avatars/user02.png',
@@ -14,17 +12,17 @@ const AVATARS = [
 ];
 
 const TITLES = [
-  'Заголовок1',
-  'Заголовок2',
-  'Заголовок3',
+  'Заголовок 1',
+  'Заголовок 2',
+  'Заголовок 3',
 ];
 
 const TYPES = [
-  'palace',
-  'flat',
-  'house',
-  'bungalow',
-  'hotel',
+  'Palace',
+  'Flat',
+  'House',
+  'Bungalow',
+  'Hotel',
 ];
 
 const FEATURES = [
@@ -37,9 +35,9 @@ const FEATURES = [
 ];
 
 const DESCRIPTIONS = [
-  'Описание1',
-  'Описание2',
-  'Описание3',
+  'Описание 1',
+  'Описание 2',
+  'Описание 3',
 ];
 
 const PHOTOS = [
@@ -87,4 +85,4 @@ const locationLng = {
   digits: 5,
 };
 
-export {MAX_COUNT, AVATARS, TITLES, TYPES, FEATURES, DESCRIPTIONS, PHOTOS, CHECKIN, CHECKOUT, Price, Room, Guest, locationLat, locationLng};
+export {AVATARS, TITLES, TYPES, FEATURES, DESCRIPTIONS, PHOTOS, CHECKIN, CHECKOUT, Price, Room, Guest, locationLat, locationLng};
