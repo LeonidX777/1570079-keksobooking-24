@@ -1,37 +1,16 @@
-const setPageDisabled = () => {
+const setFormActivity = (isActive=false) => {
   const formAd = document.querySelector('.ad-form');
-  formAd.classList.add('ad-form--disabled');
+  formAd.classList[isActive ?'remove' : 'add'] ('addForm--disabled');
 
   const fieldsets = formAd.querySelectorAll('fieldset');
-  for (const element of fieldsets) {
-    element.disabled = true;
+  fieldsets.forEach(fieldsets); {
+    fieldsets.classList[isActive ?'remove' : 'add']('fieldset');
   }
 
   const formFilters = document.querySelector('.map__filters');
-  formFilters.classList.add('map__filters--disabled');
-
-  const filterElements = formFilters.children;
-  for (const element of filterElements) {
-    element.disabled = true;
+  formFilters.forEach(formFilters) ; {
+    formFilters.classList[isActive ?'remove' : 'add']('map__filters--disabled');
   }
 };
 
-const setPageEnabled = () => {
-  const formAd = document.querySelector('.ad-form');
-  formAd.classList.remove('ad-form--disabled');
-
-  const fieldsets = formAd.querySelectorAll('fieldset');
-  for (const element of fieldsets) {
-    element.disabled = false;
-  }
-
-  const formFilters = document.querySelector('.map__filters');
-  formFilters.classList.remove('map__filters--disabled');
-
-  const filterElements = formFilters.children;
-  for (const element of filterElements) {
-    element.disabled = false;
-  }
-};
-
-export {setPageDisabled, setPageEnabled};
+export {setFormActivity};
