@@ -1,4 +1,4 @@
-import {AVATARS, TITLES, TYPES, FEATURES, DESCRIPTIONS, PHOTOS, CHECKIN, CHECKOUT, Price, Room, Guest, locationLat, locationLng} from './data.js';
+import {AVATARS, TITLES, TYPES, FEATURES, DESCRIPTIONS, PHOTOS, CHECKIN, CHECKOUT, Price, Room, Guest, locationLat, locationLng} from '../data/mock.js';
 import {getRandomIntegerInRange, getRandomPositiveFloat} from './util.js';
 
 const getFeatures = (features) => features.slice(0, getRandomIntegerInRange(features.length));
