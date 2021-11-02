@@ -11,62 +11,62 @@ const priceType = {
   palace: '10000',
 };
 
-const adForm = document.querySelector('.ad-form');
-const formTitle = adForm.querySelector('#title');
-const formPrice = adForm.querySelector('#price');
-const formType = adForm.querySelector('#type');
-const formCapacity = adForm.querySelector('#capacity');
-const formRooms = adForm.querySelector('#room_number');
+const adFormElement = document.querySelector('.ad-form');
+const formTitleElement = adFormElement.querySelector('#title');
+const formPriceElement = adFormElement.querySelector('#price');
+const formTypeElement = adFormElement.querySelector('#type');
+const formCapacityElement = adFormElement.querySelector('#capacity');
+const formRoomsElement = adFormElement.querySelector('#room_number');
 
 const onTitleInput = () => {
-  const valueLength = formTitle.value.length;
+  const valueLength = formTitleElement.value.length;
   if (valueLength === 0) {
-    formTitle.setCustomValidity('Минимальная длина заголовка - 30 символов!');
+    formTitleElement.setCustomValidity('Минимальная длина заголовка - 30 символов!');
   } else if (valueLength < MIN_TITLE_LENGTH) {
-    formTitle.setCustomValidity(`Ещё ${  MIN_TITLE_LENGTH - valueLength } симв.`);
+    formTitleElement.setCustomValidity(`Ещё ${  MIN_TITLE_LENGTH - valueLength } симв.`);
   } else if (valueLength > MAX_TITLE_LENGTH) {
-    formTitle.setCustomValidity(`Удалите лишние ${valueLength - MAX_TITLE_LENGTH} симв.`);
+    formTitleElement.setCustomValidity(`Удалите лишние ${valueLength - MAX_TITLE_LENGTH} симв.`);
   } else {
-    formTitle.setCustomValidity('');
+    formTitleElement.setCustomValidity('');
   }
-  formTitle.reportValidity();
+  formTitleElement.reportValidity();
 };
 
 const changeMinPrice = () => {
-  formPrice.min = priceType[formType.value];
-  formPrice.placeholder = priceType[formType.value];
+  formPriceElement.min = priceType[formTypeElement.value];
+  formPriceElement.placeholder = priceType[formTypeElement.value];
 };
 
 const onChangePrice = () => changeMinPrice();
 
 const onPriceInput = (evt) => {
   const value = evt.target.value;
-  const typeValue = priceType[formType.value];
+  const typeValue = priceType[formTypeElement.value];
 
   if (value < typeValue) {
-    formPrice.setCustomValidity(`Минимальная цена ${typeValue}`);
+    formPriceElement.setCustomValidity(`Минимальная цена ${typeValue}`);
   } else if (value > MAX_PRICE) {
-    formPrice.setCustomValidity(`Максимальная цена ${MAX_PRICE}`);
+    formPriceElement.setCustomValidity(`Максимальная цена ${MAX_PRICE}`);
   } else {
-    formPrice.setCustomValidity('');
+    formPriceElement.setCustomValidity('');
   }
-  formPrice.reportValidity();
+  formPriceElement.reportValidity();
 };
 
 const checkCapacity = () => {
-  const rooms = Number(formRooms.value);
-  const guests = Number(formCapacity.value);
+  const rooms = Number(formRoomsElement.value);
+  const guests = Number(formCapacityElement.value);
 
   if (rooms < guests) {
-    formCapacity.setCustomValidity('Выберите другой вариант');
+    formCapacityElement.setCustomValidity('Выберите другой вариант');
   } else if (rooms === MAX_ROOMS && guests !== 0) {
-    formCapacity.setCustomValidity('Выберите другой вариант');
+    formCapacityElement.setCustomValidity('Выберите другой вариант');
   } else if (guests === 0 && rooms !== MAX_ROOMS) {
-    formCapacity.setCustomValidity('Выберите другой вариант');
+    formCapacityElement.setCustomValidity('Выберите другой вариант');
   } else {
-    formCapacity.setCustomValidity('');
+    formCapacityElement.setCustomValidity('');
   }
-  formCapacity.reportValidity();
+  formCapacityElement.reportValidity();
 };
 
 const onChangeCapacity = () => checkCapacity();
@@ -79,13 +79,13 @@ const syncFields = () => {
 export const validateForm = () => {
   syncFields();
 
-  formTitle.addEventListener('invalid', onTitleInput);
-  formTitle.addEventListener('input', onTitleInput);
+  formTitleElement.addEventListener('invalid', onTitleInput);
+  formTitleElement.addEventListener('input', onTitleInput);
 
-  formType.addEventListener('change', onChangePrice);
-  formPrice.addEventListener('invalid', onPriceInput);
-  formPrice.addEventListener('input', onPriceInput);
+  formTypeElement.addEventListener('change', onChangePrice);
+  formPriceElement.addEventListener('invalid', onPriceInput);
+  formPriceElement.addEventListener('input', onPriceInput);
 
-  formRooms.addEventListener('change', onChangeCapacity);
-  formCapacity.addEventListener('change', onChangeCapacity);
+  formRoomsElement.addEventListener('change', onChangeCapacity);
+  formCapacityElement.addEventListener('change', onChangeCapacity);
 };
