@@ -1,7 +1,6 @@
 import {createCard} from './templates/offer.js';
 import {getAnnouncement} from './utils/mock.js';
-import {setPageActivity} from './utils/form-activity.js';
-import {makeActivity} from './form-activation.js';
+import {changeStatePage} from './form-activation.js';
 import {validateForm} from './form-validation.js';
 
 const MAX_COUNT = 10;
@@ -14,6 +13,5 @@ announcements.forEach((offer) => {
   container.appendChild(createCard(offer));
 });
 
-setPageActivity();
-makeActivity();
+changeStatePage(true);
 validateForm();
