@@ -1,7 +1,8 @@
 const MIN_TITLE_LENGTH = 30;
 const MAX_TITLE_LENGTH = 100;
 const MAX_PRICE = 1000000;
-const MAX_ROOMS = 100;
+const GUEST_FIELD_VALUES = [0, 1, 2, 3];
+const DEFAULT_VALUE_ROOM = 1;
 
 const priceType = {
   bungalow: '0',
@@ -11,15 +12,49 @@ const priceType = {
   palace: '10000',
 };
 
-const adFormElement = document.querySelector('.ad-form');
-const formTitleElement = adFormElement.querySelector('#title');
-const formPriceElement = adFormElement.querySelector('#price');
-const formTypeElement = adFormElement.querySelector('#type');
-const formCapacityElement = adFormElement.querySelector('#capacity');
-const formRoomsElement = adFormElement.querySelector('#room_number');
+const countGuestsForRoom = {
+  1: [1],
+  2: [1, 2],
+  3: [1, 2, 3],
+  100: [0],
+};
 
-const onTitleInput = () => {
-  const valueLength = formTitleElement.value.length;
+const addFormElement = document.querySelector('.ad-form');
+const formTitleElement = addFormElement.querySelector('#title');
+const formPriceElement = addFormElement.querySelector('#price');
+const formTypeElement = addFormElement.querySelector('#type');
+const formTimeFieldsetElement = addFormElement.querySelector('.ad-form__element--time');
+const formTimeInElement = addFormElement.querySelector('#timein');
+const formTimeOutElement = addFormElement.querySelector('#timeout');
+const formCapacityElement = addFormElement.querySelector('#capacity');
+const formCapacityOptionElements = formCapacityElement.querySelectorAll('option');
+const formRoomsElement = addFormElement.querySelector('#room_number');
+const addFormResetBtnElement = addFormElement.querySelector('.ad-form__reset');
+
+const changeMinPriceOfType = () => {
+  formPriceElement.min = priceType[formTypeElement.value];
+  formPriceElement.placeholder = priceType[formTypeElement.value];
+};
+
+const setDisabledAndSelectedStateRoomOptions = (capacityValues) => {
+  formCapacityOptionElements.forEach((option) => option.disabled = false);
+  const disabledRoomValues = GUEST_FIELD_VALUES.filter((value) => !capacityValues.includes(value));
+
+  const disabledGuestOptionElements = [];
+  disabledRoomValues.forEach((value) => {
+    const optionElement = formCapacityElement.querySelector(`option[value="${value}"]`);
+    disabledGuestOptionElements.push(optionElement);
+  });
+  disabledGuestOptionElements.forEach((option) => option.disabled = true);
+
+  const selectedOptionElement = formCapacityElement.querySelector(`option[value="${capacityValues[0]}"]`);
+  selectedOptionElement.selected = true;
+};
+
+const onTitleInput = (evt) => {
+  const value = evt.target.value;
+  const valueLength = value;
+
   if (valueLength === 0) {
     formTitleElement.setCustomValidity('Минимальная длина заголовка - 30 символов!');
   } else if (valueLength < MIN_TITLE_LENGTH) {
@@ -29,15 +64,11 @@ const onTitleInput = () => {
   } else {
     formTitleElement.setCustomValidity('');
   }
+
   formTitleElement.reportValidity();
 };
 
-const changeMinPrice = () => {
-  formPriceElement.min = priceType[formTypeElement.value];
-  formPriceElement.placeholder = priceType[formTypeElement.value];
-};
-
-const onChangePrice = () => changeMinPrice();
+const onChangeType = () => changeMinPriceOfType();
 
 const onPriceInput = (evt) => {
   const value = evt.target.value;
@@ -50,42 +81,40 @@ const onPriceInput = (evt) => {
   } else {
     formPriceElement.setCustomValidity('');
   }
+
   formPriceElement.reportValidity();
 };
 
-const checkCapacity = () => {
-  const rooms = Number(formRoomsElement.value);
-  const guests = Number(formCapacityElement.value);
+const onChangeFormTimeFieldset = (evt) => {
+  const value = evt.target.value;
 
-  if (rooms < guests) {
-    formCapacityElement.setCustomValidity('Выберите другой вариант');
-  } else if (rooms === MAX_ROOMS && guests !== 0) {
-    formCapacityElement.setCustomValidity('Выберите другой вариант');
-  } else if (guests === 0 && rooms !== MAX_ROOMS) {
-    formCapacityElement.setCustomValidity('Выберите другой вариант');
-  } else {
-    formCapacityElement.setCustomValidity('');
-  }
-  formCapacityElement.reportValidity();
+  formTimeInElement.value = evt.target.value;
+  formTimeOutElement.value = evt.target.value;
+
+  const timeOptionActiveElements = formTimeFieldsetElement.querySelectorAll(`option[value="${value}"]`);
+  timeOptionActiveElements.forEach((option) => option.selected = true);
 };
 
-const onChangeCapacity = () => checkCapacity();
+const onChangeRooms = (evt) => {
+  const value = evt.target.value;
 
-const syncFields = () => {
-  changeMinPrice();
-  checkCapacity();
+  const actualCapacityValues = countGuestsForRoom[value];
+  setDisabledAndSelectedStateRoomOptions(actualCapacityValues);
 };
+
+const onClickResetBtn = () => setDisabledAndSelectedStateRoomOptions(countGuestsForRoom[DEFAULT_VALUE_ROOM]);
 
 export const validateForm = () => {
-  syncFields();
+  //временно для проверки работоспособности формы:
+  const formAddreseElement = addFormElement.querySelector('#address');
+  formAddreseElement.value = '35.65000, 139.70000';
 
-  formTitleElement.addEventListener('invalid', onTitleInput);
+  changeMinPriceOfType();
+
   formTitleElement.addEventListener('input', onTitleInput);
-
-  formTypeElement.addEventListener('change', onChangePrice);
-  formPriceElement.addEventListener('invalid', onPriceInput);
+  formTypeElement.addEventListener('change', onChangeType);
   formPriceElement.addEventListener('input', onPriceInput);
-
-  formRoomsElement.addEventListener('change', onChangeCapacity);
-  formCapacityElement.addEventListener('change', onChangeCapacity);
+  formTimeFieldsetElement.addEventListener('change', onChangeFormTimeFieldset);
+  formRoomsElement.addEventListener('change', onChangeRooms);
+  addFormResetBtnElement.addEventListener('click', onClickResetBtn);
 };
