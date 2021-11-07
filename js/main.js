@@ -2,6 +2,8 @@ import {createCard} from './templates/offer.js';
 import {getAnnouncement} from './utils/mock.js';
 import {changeStatePage} from './form-activation.js';
 import {validateForm} from './form-validation.js';
+import './map.js';
+import './api.js';
 
 const MAX_COUNT = 10;
 

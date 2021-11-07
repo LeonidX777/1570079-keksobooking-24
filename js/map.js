@@ -11,7 +11,7 @@ const ATTRIBUTION = {
   attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>',
 };
 
-const Default = {
+const  DefaultLeaflet = {
   LAT: 35.67500,
   LNG: 139.75000,
   ZOOM: 13,
@@ -34,7 +34,7 @@ const mapCanvas = document.querySelector('#map-canvas');
 const address = document.querySelector('#address');
 
 const getAddressValue = () => {
-  const { LAT, LNG, DIGITS } = Default;
+  const { LAT, LNG, DIGITS } =  DefaultLeaflet;
   address.value = `${LAT.toFixed(DIGITS)}, ${LNG.toFixed(DIGITS)}`;
 };
 
@@ -43,7 +43,7 @@ const map = L.map(mapCanvas)
     getAddressValue();
     changeStatePage();
   })
-  .setView({ lat: Default.LAT, lng: Default.LNG }, Default.ZOOM);
+  .setView({ lat: DefaultLeaflet.LAT, lng: DefaultLeaflet.LNG }, DefaultLeaflet.ZOOM);
 
 L.tileLayer(TILE_LAYER, { ATTRIBUTION }).addTo(map);
 
@@ -56,7 +56,7 @@ const createMainPinMarker = () => {
   });
 
   return L.marker(
-    { lat: Default.LAT, lng: Default.LNG },
+    { lat: DefaultLeaflet.LAT, lng: DefaultLeaflet.LNG },
     { draggable: true, icon: mainPinIcon },
   );
 };
@@ -64,7 +64,7 @@ const createMainPinMarker = () => {
 const mainMarker = createMainPinMarker();
 
 const onAddressChange = (evt) => {
-  const { DIGITS } = Default;
+  const { DIGITS } = DefaultLeaflet;
   const { lat, lng } = evt.target.getLatLng();
 
   return address.value = `${lat.toFixed(DIGITS)}, ${lng.toFixed(DIGITS)}`;
@@ -93,7 +93,7 @@ export const initMap = () => {
 };
 
 export const resetMap = () => {
-  const { LAT, LNG, ZOOM } = Default;
+  const { LAT, LNG, ZOOM } = DefaultLeaflet;
 
   map.setView({ lat: LAT, lng: LNG }, ZOOM);
   mainMarker.setLatLng({ lat: LAT, lng: LNG });
