@@ -1,19 +1,28 @@
-import {createCard} from './templates/offer.js';
-import {getAnnouncement} from './utils/mock.js';
-import {changeStatePage} from './form-activation.js';
-import {validateForm} from './form-validation.js';
-import './map.js';
-import './api.js';
+import {changeStatePage} from './utils/page-activation.js';
+import {getData} from './api.js';
+import {initMap, renderMarkers} from './map.js';
+import {showAlert} from './templates/popup.js';
+import {startValidateForm} from './form.js';
 
-const MAX_COUNT = 10;
+const MAX_COUNT_POINTS = 10;
 
-const announcements = new Array (MAX_COUNT).fill('').map(() => getAnnouncement());
+let points = null;
 
-const container = document.querySelector('#map-canvas');
+changeStatePage();
 
-announcements.forEach((offer) => {
-  container.appendChild(createCard(offer));
-});
+const successGetDataHandler = (data) => {
+  points = data.slice(0, MAX_COUNT_POINTS);
+  renderMarkers(points);
+  startValidateForm();
+};
 
-changeStatePage(true);
-validateForm();
+const errorGetDataHandler = (error, operation) => {
+  showAlert(error, operation);
+};
+
+const mapLoadHandler = () => {
+  changeStatePage(true);
+};
+
+getData(successGetDataHandler, errorGetDataHandler);
+initMap(mapLoadHandler);

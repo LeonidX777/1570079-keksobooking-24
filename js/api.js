@@ -1,9 +1,9 @@
-import { renderMarkers } from './map.js';
-import { adForm } from './form-activation.js';
-import { showMessage } from './util.js';
+import { NameOperation } from './constants.js';
+const API_URL = 'https://24.javascript.pages.academy/keksobooking/data';
+const API_SEND_URL = 'https://24.javascript.pages.academy/keksobooking';
 
-const getData = () => {
-  fetch('https://24.javascript.pages.academy/keksobooking/data')
+const getData = (successHandler, errorHandler) => {
+  fetch(API_URL)
     .then((response) => {
       if (response.ok) {
         return response.json();
@@ -11,19 +11,13 @@ const getData = () => {
 
       throw new Error(`${response.status} ${response.statusText}`);
     })
-    .then((advertisements) => {
-      if (advertisements) {
-        renderMarkers(advertisements);
-      }
-    })
-    .catch((err) => {
-      showMessage('load-error', err);
-    });
+    .then((points) => successHandler(points))
+    .catch((error) => errorHandler(error, NameOperation.GET));
 };
 
-const sendData = (onSuccess, onFail, body) => {
+const sendData = (successHandler, errorHandler, body) => {
   fetch(
-    'https://24.javascript.pages.academy/keksobooking',
+    API_SEND_URL,
     {
       method: 'POST',
       body,
@@ -31,15 +25,10 @@ const sendData = (onSuccess, onFail, body) => {
   )
     .then((response) => {
       if (response.ok) {
-        adForm.reset();
-        onSuccess();
-      } else {
-        onFail();
+        successHandler();
       }
     })
-    .catch(() => {
-      onFail();
-    });
+    .catch((error) => errorHandler(error, NameOperation.SEND));
 };
 
 export { getData, sendData };

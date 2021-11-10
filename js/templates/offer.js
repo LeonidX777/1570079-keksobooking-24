@@ -29,8 +29,8 @@ const createFeatures = (features, container) => {
   });
 };
 
-const createCard = (object) => {
-  const {author, offer} = object;
+const createCard = (data) => {
+  const {author, offer} = data;
   const offerCard = card.cloneNode(true);
   const title = offerCard.querySelector('.popup__title');
   if (offer.title) {

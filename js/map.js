@@ -1,9 +1,5 @@
-import {changeStatePage} from './form-activation.js';
-import { createCard } from './offer.js';
-import { getAnnouncements } from './utils/mock.js';
-
-
-const MAX_COUNT = 10;
+import { createCard } from './templates/offer.js';
+import { DefaultLeaflet } from './constants.js';
 
 const TILE_LAYER = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 
@@ -11,12 +7,6 @@ const ATTRIBUTION = {
   attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>',
 };
 
-const  DefaultLeaflet = {
-  LAT: 35.67500,
-  LNG: 139.75000,
-  ZOOM: 13,
-  DIGITS: 5,
-};
 
 const MainPinMarker = {
   URL: '../img/main-pin.svg',
@@ -30,24 +20,15 @@ const PinMarker = {
   HEIGHT: 40,
 };
 
-const mapCanvas = document.querySelector('#map-canvas');
-const address = document.querySelector('#address');
+const mapCanvasElement = document.querySelector('#map-canvas');
+const addressElement = document.querySelector('#address');
+const map = L.map(mapCanvasElement);
 
-const getAddressValue = () => {
+const getAddressElementValue = () => {
   const { LAT, LNG, DIGITS } =  DefaultLeaflet;
-  address.value = `${LAT.toFixed(DIGITS)}, ${LNG.toFixed(DIGITS)}`;
+  addressElement.value = `${LAT.toFixed(DIGITS)}, ${LNG.toFixed(DIGITS)}`;
 };
 
-const map = L.map(mapCanvas)
-  .on('load', () => {
-    getAddressValue();
-    changeStatePage();
-  })
-  .setView({ lat: DefaultLeaflet.LAT, lng: DefaultLeaflet.LNG }, DefaultLeaflet.ZOOM);
-
-L.tileLayer(TILE_LAYER, { ATTRIBUTION }).addTo(map);
-
-const markerGroup = L.layerGroup().addTo(map);
 const createMainPinMarker = () => {
   const mainPinIcon = L.icon({
     iconUrl: MainPinMarker.URL,
@@ -63,11 +44,11 @@ const createMainPinMarker = () => {
 
 const mainMarker = createMainPinMarker();
 
-const onAddressChange = (evt) => {
+const onMoveMarker = (evt) => {
   const { DIGITS } = DefaultLeaflet;
   const { lat, lng } = evt.target.getLatLng();
 
-  return address.value = `${lat.toFixed(DIGITS)}, ${lng.toFixed(DIGITS)}`;
+  return addressElement.value = `${lat.toFixed(DIGITS)}, ${lng.toFixed(DIGITS)}`;
 };
 
 const createMarker = (point) => {
@@ -78,25 +59,27 @@ const createMarker = (point) => {
     iconSize: [PinMarker.WIDTH, PinMarker.HEIGHT],
     iconAnchor: [PinMarker.WIDTH / 2, PinMarker.HEIGHT],
   });
-
-  L.marker({ lat, lng }, { icon }).addTo(markerGroup).bindPopup(createCard(point));
+  L.marker({ lat, lng }, { icon }).addTo(map).bindPopup(createCard(point));
 };
 
-const renderMarkers = (points) => points.forEach(createMarker);
+const renderMarkers = (points) => points.forEach((point) => createMarker(point));
 
-const announcements = getAnnouncements(MAX_COUNT);
+const initMap = (onLoadMap) => {
+  map.on('load', onLoadMap)
+    .setView({ lat: DefaultLeaflet.LAT, lng: DefaultLeaflet.LNG }, DefaultLeaflet.ZOOM);
 
-export const initMap = () => {
+  L.tileLayer(TILE_LAYER, { ATTRIBUTION }).addTo(map);
   mainMarker.addTo(map);
-  mainMarker.on('move', onAddressChange);
-  renderMarkers(announcements);
+  mainMarker.on('move', onMoveMarker);
 };
 
-export const resetMap = () => {
+const resetMap = () => {
   const { LAT, LNG, ZOOM } = DefaultLeaflet;
 
   map.setView({ lat: LAT, lng: LNG }, ZOOM);
   mainMarker.setLatLng({ lat: LAT, lng: LNG });
 
-  getAddressValue();
+  getAddressElementValue();
 };
+
+export {initMap, resetMap, renderMarkers};
