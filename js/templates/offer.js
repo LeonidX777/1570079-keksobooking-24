@@ -40,11 +40,12 @@ const createCard = (data) => {
   }
   const address = offerCard.querySelector('.popup__text--address');
   if (offer.address) {
-    address.textContent = `${offer.address.lat} ${offer.address.lng}`;
+    address.textContent = offer.address;
   }
   else {
     address.remove();
   }
+
   const price = offerCard.querySelector('.popup__text--price');
   if (offer.price) {
     price.textContent = `${offer.price} ₽/ночь`;

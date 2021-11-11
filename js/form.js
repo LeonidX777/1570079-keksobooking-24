@@ -124,14 +124,21 @@ const onClickResetBtn = (evt) => {
   resetForm();
 };
 
-
 const successFormSubmitHandler = () => {
-  // console.log('send');
-  resetForm();
+  addFormElement.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    // console.log('send');
+    sendData(new FormData(evt.target));
+    resetForm();
+  });
 };
 const errorFormSubmitHandler = (error, operation) => {
-  // console.log('fail');
-  showAlert(error, operation);
+  addFormElement.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    // console.log('fail');
+    sendData(new FormData(evt.target), error, operation);
+    showAlert(error, operation);
+  });
 };
 
 const onFormSubmit = (evt) => {
