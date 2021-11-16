@@ -1,6 +1,7 @@
 import {changeStatePage} from './utils/page-activation.js';
 import {getData} from './api.js';
 import {initMap, renderMarkers} from './map.js';
+import {startFilter} from './filter.js';
 import {showAlert} from './templates/popup.js';
 import {startValidateForm} from './form.js';
 
@@ -13,6 +14,7 @@ changeStatePage();
 const successGetDataHandler = (data) => {
   points = data.slice(0, MAX_COUNT_POINTS);
   renderMarkers(points);
+  startFilter(points);
   startValidateForm();
 };
 

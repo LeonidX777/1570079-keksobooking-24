@@ -1,74 +1,79 @@
-import { NameOperation } from '../constants.js';
+import {NameOperation} from '../constants.js';
 
 const ALERT_SHOW_TIME = 3000;
+const ESC_KEY_CODE = 27;
 
 const MessageError = {
   SEND: 'Произошла ошибка отправки данных',
   GET: 'Произошла ошибка загрузки данных',
 };
 
-const showMessage = (name, error) => {
-  const templateFragment = document.querySelector(`#${name}`).content;
-  const template = templateFragment.querySelector(`.${name}`);
-  const message = template.cloneNode(true);
-  const button = message.querySelector(`.${name}__button`);
+const bodyElement = document.querySelector('body');
+let activePopupElement = null;
+let btnErrorElement = null;
 
-  if (error) {
-    const messageText = message.querySelector(`.${name}__text`);
-    messageText.textContent = error;
-  }
-
-  if (button) {
-    button.addEventListener('click', () => {
-      message.remove();
-    }, { once: true });
-  }
-
-  document.addEventListener('click', (evt) => {
-    evt.preventDefault();
-    message.remove();
-  }, { once: true });
-
-  document.addEventListener('keydown', (evt) => {
-    if (evt.key === 'Escape') {
-      evt.preventDefault();
-      message.remove();
-    }
-  }, { once: true });
-
-  document.body.appendChild(message);
+const getClosePopup = () => {
+  activePopupElement.remove();
+  activePopupElement = null;
+  btnErrorElement = null;
 };
 
-const onClickBtnAlertPopup = (evt) => {
-  const btnElement = evt.target;
-  btnElement.removeEventListener('click', onClickBtnAlertPopup);
-  const parentElement = btnElement.closest('.error');
-  parentElement.remove();
+const onClickWindow = (evt) => {
+  evt.preventDefault();
+  getClosePopup();
+};
+
+const onKeydownWindow = (evt) => {
+  if (evt.keyCode === ESC_KEY_CODE) {
+    evt.preventDefault();
+    getClosePopup();
+    window.removeEventListener('keydown', onKeydownWindow);
+  }
+};
+
+const onClickBtnErrorElement = (evt) => {
+  evt.preventDefault();
+  btnErrorElement.removeEventListener('click', onClickBtnErrorElement);
+  window.removeEventListener('keydown', onKeydownWindow);
+  getClosePopup();
 };
 
 const showAlert = (error, operation) => {
   const alertFragment = document.querySelector('#error').content;
   const templateAlert = alertFragment.querySelector('.error');
-  const alertElement = templateAlert.cloneNode(true);
 
-  const alertMessageElement = alertElement.querySelector('.error__message');
-  const alertNameElement = alertElement.querySelector('.error__name');
+  activePopupElement = templateAlert.cloneNode(true);
+
+  const alertMessageElement = activePopupElement.querySelector('.error__message');
+  const alertNameElement = activePopupElement.querySelector('.error__name');
 
   alertMessageElement.textContent = MessageError[operation];
   alertNameElement.textContent = error;
 
-  const btnElement = alertElement.querySelector('.error__button');
-
-  if (operation === NameOperation.SEND) {
-    btnElement.remove();
-    setTimeout(() => alertElement.remove(), ALERT_SHOW_TIME);
-  }
+  btnErrorElement = activePopupElement.querySelector('.error__button');
 
   if (operation === NameOperation.GET) {
-    btnElement.addEventListener('click', onClickBtnAlertPopup);
+    btnErrorElement.remove();
+    setTimeout(() => activePopupElement.remove(), ALERT_SHOW_TIME);
   }
 
-  document.body.append(alertElement);
+  if (operation === NameOperation.SEND) {
+    btnErrorElement.addEventListener('click', onClickBtnErrorElement);
+    window.addEventListener('keydown', onKeydownWindow);
+  }
+
+  bodyElement.append(activePopupElement);
 };
 
-export {showAlert, showMessage};
+const showSuccess = () => {
+  const successFragment = document.querySelector('#success').content;
+  const templateSuccess = successFragment.querySelector('.success');
+  activePopupElement = templateSuccess.cloneNode(true);
+
+  bodyElement.append(activePopupElement);
+
+  activePopupElement.addEventListener('click', onClickWindow);
+  window.addEventListener('keydown', onKeydownWindow);
+};
+
+export {showAlert, showSuccess};

@@ -22,8 +22,10 @@ const createImages = (container, sources) => {
 
 const createFeatures = (features, container) => {
   const list = container.querySelectorAll('li');
+
+
   list.forEach((item) => {
-    if (features.some((feature) => item.classList.contains(`popup__feature--${feature}`))) {
+    if (!features.some((feature) => item.classList.contains(`popup__feature--${feature}`))) {
       item.remove();
     }
   });
@@ -45,7 +47,6 @@ const createCard = (data) => {
   else {
     address.remove();
   }
-
   const price = offerCard.querySelector('.popup__text--price');
   if (offer.price) {
     price.textContent = `${offer.price} ₽/ночь`;

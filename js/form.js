@@ -1,6 +1,8 @@
 import {DefaultLeaflet} from './constants.js';
 import {sendData} from './api.js';
-import {showAlert} from './templates/popup.js';
+import {resetFilter} from './filter.js';
+import {resetMainMarker} from './map.js';
+import {showAlert, showSuccess} from './templates/popup.js';
 
 const MIN_TITLE_LENGTH = 30;
 const MAX_TITLE_LENGTH = 100;
@@ -35,7 +37,6 @@ const formCapacityOptionElements = formCapacityElement.querySelectorAll('option'
 const formRoomsElement = addFormElement.querySelector('#room_number');
 const formAdressesElement = addFormElement.querySelector('#address');
 const addFormResetBtnElement = addFormElement.querySelector('.ad-form__reset');
-const addFormSubmitBtnElement = addFormElement.querySelector('.ad-form__submit');
 
 const changeMinPriceOfType = () => {
   formPriceElement.min = priceType[formTypeElement.value];
@@ -122,31 +123,23 @@ const resetForm = () => {
 const onClickResetBtn = (evt) => {
   evt.preventDefault();
   resetForm();
+  resetMainMarker();
+  resetFilter();
 };
 
 const successFormSubmitHandler = () => {
-  addFormElement.addEventListener('submit', (evt) => {
-    evt.preventDefault();
-    // console.log('send');
-    sendData(new FormData(evt.target));
-    resetForm();
-  });
+  showSuccess();
+  resetForm();
+  resetMainMarker();
+  resetFilter();
 };
+
 const errorFormSubmitHandler = (error, operation) => {
-  addFormElement.addEventListener('submit', (evt) => {
-    evt.preventDefault();
-    // console.log('fail');
-    sendData(new FormData(evt.target), error, operation);
-    showAlert(error, operation);
-  });
+  showAlert(error, operation);
 };
 
 const onFormSubmit = (evt) => {
   evt.preventDefault();
-
-  addFormSubmitBtnElement.disabled = true;
-  addFormResetBtnElement.disabled = true;
-  // stopValidateForm();
 
   if (addFormElement.dataset.valid) {
     sendData(successFormSubmitHandler, errorFormSubmitHandler, new FormData(evt.target));
@@ -165,14 +158,4 @@ const startValidateForm = () => {
   addFormElement.addEventListener('submit', onFormSubmit);
 };
 
-const stopValidateForm = () => {
-  formTitleElement.removeEventListener('input', onTitleInput);
-  formTypeElement.removeEventListener('change', onChangeType);
-  formPriceElement.removeEventListener('input', onPriceInput);
-  formTimeFieldsetElement.removeEventListener('change', onChangeFormTimeFieldset);
-  formRoomsElement.removeEventListener('change', onChangeRooms);
-  addFormResetBtnElement.removeEventListener('click', onClickResetBtn);
-  addFormElement.removeEventListener('submit', onFormSubmit);
-};
-
-export {startValidateForm, stopValidateForm};
+export {startValidateForm};
