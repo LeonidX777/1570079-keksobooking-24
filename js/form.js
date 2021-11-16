@@ -1,3 +1,9 @@
+import {DefaultLeaflet} from './constants.js';
+import {sendData} from './api.js';
+import {resetFilter} from './filter.js';
+import {resetMainMarker} from './map.js';
+import {showAlert, showSuccess} from './templates/popup.js';
+
 const MIN_TITLE_LENGTH = 30;
 const MAX_TITLE_LENGTH = 100;
 const MAX_PRICE = 1000000;
@@ -29,6 +35,7 @@ const formTimeOutElement = addFormElement.querySelector('#timeout');
 const formCapacityElement = addFormElement.querySelector('#capacity');
 const formCapacityOptionElements = formCapacityElement.querySelectorAll('option');
 const formRoomsElement = addFormElement.querySelector('#room_number');
+const formAdressesElement = addFormElement.querySelector('#address');
 const addFormResetBtnElement = addFormElement.querySelector('.ad-form__reset');
 
 const changeMinPriceOfType = () => {
@@ -54,6 +61,7 @@ const setDisabledAndSelectedStateRoomOptions = (capacityValues) => {
 const onTitleInput = (evt) => {
   const value = evt.target.value;
   const valueLength = value;
+  addFormElement.dataset.valid = false;
 
   if (valueLength === 0) {
     formTitleElement.setCustomValidity('Минимальная длина заголовка - 30 символов!');
@@ -62,6 +70,7 @@ const onTitleInput = (evt) => {
   } else if (valueLength > MAX_TITLE_LENGTH) {
     formTitleElement.setCustomValidity(`Удалите лишние ${valueLength - MAX_TITLE_LENGTH} симв.`);
   } else {
+    addFormElement.dataset.valid = true;
     formTitleElement.setCustomValidity('');
   }
 
@@ -73,12 +82,14 @@ const onChangeType = () => changeMinPriceOfType();
 const onPriceInput = (evt) => {
   const value = evt.target.value;
   const typeValue = priceType[formTypeElement.value];
+  addFormElement.dataset.valid = false;
 
   if (value < typeValue) {
     formPriceElement.setCustomValidity(`Минимальная цена ${typeValue}`);
   } else if (value > MAX_PRICE) {
     formPriceElement.setCustomValidity(`Максимальная цена ${MAX_PRICE}`);
   } else {
+    addFormElement.dataset.valid = true;
     formPriceElement.setCustomValidity('');
   }
 
@@ -102,19 +113,49 @@ const onChangeRooms = (evt) => {
   setDisabledAndSelectedStateRoomOptions(actualCapacityValues);
 };
 
-const onClickResetBtn = () => setDisabledAndSelectedStateRoomOptions(countGuestsForRoom[DEFAULT_VALUE_ROOM]);
-
-export const validateForm = () => {
-  //временно для проверки работоспособности формы:
-  const formAddreseElement = addFormElement.querySelector('#address');
-  formAddreseElement.value = '35.65000, 139.70000';
-
+const resetForm = () => {
+  addFormElement.reset();
+  setDisabledAndSelectedStateRoomOptions(countGuestsForRoom[DEFAULT_VALUE_ROOM]);
+  formAdressesElement.value = `${DefaultLeaflet.LAT}, ${DefaultLeaflet.LNG}`;
   changeMinPriceOfType();
+};
 
+const onClickResetBtn = (evt) => {
+  evt.preventDefault();
+  resetForm();
+  resetMainMarker();
+  resetFilter();
+};
+
+const successFormSubmitHandler = () => {
+  showSuccess();
+  resetForm();
+  resetMainMarker();
+  resetFilter();
+};
+
+const errorFormSubmitHandler = (error, operation) => {
+  showAlert(error, operation);
+};
+
+const onFormSubmit = (evt) => {
+  evt.preventDefault();
+
+  if (addFormElement.dataset.valid) {
+    sendData(successFormSubmitHandler, errorFormSubmitHandler, new FormData(evt.target));
+  }
+};
+
+const startValidateForm = () => {
+  formAdressesElement.value = `${DefaultLeaflet.LAT}, ${DefaultLeaflet.LNG}`;
+  changeMinPriceOfType();
   formTitleElement.addEventListener('input', onTitleInput);
   formTypeElement.addEventListener('change', onChangeType);
   formPriceElement.addEventListener('input', onPriceInput);
   formTimeFieldsetElement.addEventListener('change', onChangeFormTimeFieldset);
   formRoomsElement.addEventListener('change', onChangeRooms);
   addFormResetBtnElement.addEventListener('click', onClickResetBtn);
+  addFormElement.addEventListener('submit', onFormSubmit);
 };
+
+export {startValidateForm};

@@ -22,15 +22,17 @@ const createImages = (container, sources) => {
 
 const createFeatures = (features, container) => {
   const list = container.querySelectorAll('li');
+
+
   list.forEach((item) => {
-    if (features.some((feature) => item.classList.contains(`popup__feature--${feature}`))) {
+    if (!features.some((feature) => item.classList.contains(`popup__feature--${feature}`))) {
       item.remove();
     }
   });
 };
 
-const createCard = (object) => {
-  const {author, offer} = object;
+const createCard = (data) => {
+  const {author, offer} = data;
   const offerCard = card.cloneNode(true);
   const title = offerCard.querySelector('.popup__title');
   if (offer.title) {
@@ -40,7 +42,7 @@ const createCard = (object) => {
   }
   const address = offerCard.querySelector('.popup__text--address');
   if (offer.address) {
-    address.textContent = `${offer.address.lat} ${offer.address.lng}`;
+    address.textContent = offer.address;
   }
   else {
     address.remove();

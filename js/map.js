@@ -1,21 +1,10 @@
-import {changeStatePage} from './form-activation.js';
-import { createCard } from './offer.js';
-import { getAnnouncements } from './utils/mock.js';
-
-
-const MAX_COUNT = 10;
+import { createCard } from './templates/offer.js';
+import { DefaultLeaflet } from './constants.js';
 
 const TILE_LAYER = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 
 const ATTRIBUTION = {
   attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>',
-};
-
-const Default = {
-  LAT: 35.67500,
-  LNG: 139.75000,
-  ZOOM: 13,
-  DIGITS: 5,
 };
 
 const MainPinMarker = {
@@ -30,44 +19,34 @@ const PinMarker = {
   HEIGHT: 40,
 };
 
-const mapCanvas = document.querySelector('#map-canvas');
-const address = document.querySelector('#address');
+const mapCanvasElement = document.querySelector('#map-canvas');
+const addressElement = document.querySelector('#address');
 
-const getAddressValue = () => {
-  const { LAT, LNG, DIGITS } = Default;
-  address.value = `${LAT.toFixed(DIGITS)}, ${LNG.toFixed(DIGITS)}`;
-};
-
-const map = L.map(mapCanvas)
-  .on('load', () => {
-    getAddressValue();
-    changeStatePage();
-  })
-  .setView({ lat: Default.LAT, lng: Default.LNG }, Default.ZOOM);
-
-L.tileLayer(TILE_LAYER, { ATTRIBUTION }).addTo(map);
+const map = L.map(mapCanvasElement);
 
 const markerGroup = L.layerGroup().addTo(map);
-const createMainPinMarker = () => {
-  const mainPinIcon = L.icon({
-    iconUrl: MainPinMarker.URL,
-    iconSize: [MainPinMarker.WIDTH, MainPinMarker.HEIGHT],
-    iconAnchor: [MainPinMarker.WIDTH / 2, MainPinMarker.HEIGHT],
-  });
 
-  return L.marker(
-    { lat: Default.LAT, lng: Default.LNG },
-    { draggable: true, icon: mainPinIcon },
-  );
+const mainPinIcon = L.icon({
+  iconUrl: MainPinMarker.URL,
+  iconSize: [MainPinMarker.WIDTH, MainPinMarker.HEIGHT],
+  iconAnchor: [MainPinMarker.WIDTH / 2, MainPinMarker.HEIGHT],
+});
+
+const mainMarker = L.marker(
+  { lat: DefaultLeaflet.LAT, lng: DefaultLeaflet.LNG },
+  { draggable: true, icon: mainPinIcon },
+);
+
+const getAddressElementValue = () => {
+  const { LAT, LNG, DIGITS } =  DefaultLeaflet;
+  addressElement.value = `${LAT.toFixed(DIGITS)}, ${LNG.toFixed(DIGITS)}`;
 };
 
-const mainMarker = createMainPinMarker();
-
-const onAddressChange = (evt) => {
-  const { DIGITS } = Default;
+const onMoveMarker = (evt) => {
+  const { DIGITS } = DefaultLeaflet;
   const { lat, lng } = evt.target.getLatLng();
 
-  return address.value = `${lat.toFixed(DIGITS)}, ${lng.toFixed(DIGITS)}`;
+  return addressElement.value = `${lat.toFixed(DIGITS)}, ${lng.toFixed(DIGITS)}`;
 };
 
 const createMarker = (point) => {
@@ -78,25 +57,29 @@ const createMarker = (point) => {
     iconSize: [PinMarker.WIDTH, PinMarker.HEIGHT],
     iconAnchor: [PinMarker.WIDTH / 2, PinMarker.HEIGHT],
   });
-
   L.marker({ lat, lng }, { icon }).addTo(markerGroup).bindPopup(createCard(point));
 };
 
-const renderMarkers = (points) => points.forEach(createMarker);
+const renderMarkers = (points) => points.forEach((point) => createMarker(point));
 
-const announcements = getAnnouncements(MAX_COUNT);
+const initMap = (onLoadMap) => {
+  map.on('load', onLoadMap).setView({ lat: DefaultLeaflet.LAT, lng: DefaultLeaflet.LNG }, DefaultLeaflet.ZOOM);
 
-export const initMap = () => {
-  mainMarker.addTo(map);
-  mainMarker.on('move', onAddressChange);
-  renderMarkers(announcements);
+  L.tileLayer(TILE_LAYER, { ATTRIBUTION }).addTo(map);
+  mainMarker.addTo(markerGroup);
+  mainMarker.on('move', onMoveMarker);
 };
 
-export const resetMap = () => {
-  const { LAT, LNG, ZOOM } = Default;
-
-  map.setView({ lat: LAT, lng: LNG }, ZOOM);
+const resetMainMarker = () => {
+  const { LAT, LNG, ZOOM } = DefaultLeaflet;
   mainMarker.setLatLng({ lat: LAT, lng: LNG });
-
-  getAddressValue();
+  map.setView({ lat: LAT, lng: LNG }, ZOOM);
+  getAddressElementValue();
 };
+
+const resetMap = () => {
+  markerGroup.clearLayers();
+  mainMarker.addTo(markerGroup);
+};
+
+export {initMap, resetMap, resetMainMarker, renderMarkers};
